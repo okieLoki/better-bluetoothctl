@@ -1,23 +1,46 @@
-import { execSync } from "child_process";
-import inquirer from "inquirer";
+import mainMenu from "./menus/mainMenu";
+import runBluetooth from "./utils/runBluetooth";
+import scanAndConnect from "./utils/scanAndConnect";
 import chalk from "chalk";
+import inquirer from "inquirer";
 
-interface Device{
-    name: string;
-    macAddr: string;
+const main = async () => {
+
+  console.log(chalk.green("Welcome to the Bluetooth CLI!"));
+
+  let exit = false;
+
+  while (!exit) {
+    const { action } = await inquirer.prompt(mainMenu)
+
+    switch (action) {
+      case 'Power On':
+        runBluetooth("power on");
+        break;
+      case 'Power Off':
+        runBluetooth("power off");
+        break;
+      case 'Scan':
+        runBluetooth("scan on");
+        break;
+      case 'Make Discoverable':
+        runBluetooth("discoverable on");
+        break;
+      case 'Connect':
+        scanAndConnect();
+        break;
+      case 'Disconnect':
+        runBluetooth("disconnect");
+        break;
+      case 'Exit':
+        exit = true;
+        break;
+      default:
+        console.log(chalk.red("Invalid option"));
+        break;
+    }
+  }
+
 }
 
-const mainMenu = [
-  {
-    type: "list",
-    name: "action",
-    message: "Select an action: ",
-    choices: [
-      'Power On/Off',
-      'Pair/Unpair',
-      'Scan',
-      'Connect/Disconnect',
-      'Exit'
-    ]
-  }
-]
+main();
